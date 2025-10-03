@@ -1,0 +1,16 @@
+{% extends 'layout-account.html' %}
+{% load static %}
+{% block title %}Error{% endblock %}
+
+{% block content %}
+<div class="relative w-full h-screen bg-cover bg-center"
+    style="background-image: url('{% static "images/bg.jpg" %}');">
+     
+    <!-- Overlay มืดหน่อย -->
+    <div class="absolute inset-0 bg-black/50"></div>
+
+    <div class="relative h-screen flex justify-center items-center">
+        Sorry
+    </div>
+</div>
+{% endblock %}

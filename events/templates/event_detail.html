@@ -1,0 +1,102 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}Event Detail{% endblock %}
+
+{% block content %}
+<div class="flex justify-center text-white my-10 -mt-40">
+    <div class="inline-block w-[75%]">
+        <div class="flex gap-10">
+            <img src="{{ event.image.url }}" alt="{{ event.title }}" class="w-[50%]">
+            <div class="flex flex-col">
+                <h1 class="text-4xl font-bold">{{ event.title }}</h1>
+                <div class="my-3">
+                    {% for cat in event.categories.all %}
+                    <span class="border-2 border-violet-400 text-violet-400 px-3 py-1 rounded-lg">{{ cat.name }}</span>
+                    {% endfor %}
+                </div>
+                <div class="my-5">
+                    <h2><span class="font-bold">Hosted By:</span> {{ event.user.first_name }} {{ event.user.last_name }}</h2>
+                    <h2>🗓️ {{ event.date|date:"F j, Y" }} ( {{ event.start_time }} - {{ event.end_time }} )</h2>
+                    <h2>📍 {{ event.place }}</h2>
+                    <div>
+                        <h2>📝 Detail:</h2>
+                        <h2>{{ event.detail }}</h2>
+                    </div>
+                </div>
+                <div class="my-3">
+                    {% if not register %}
+                    <div>
+                        <h1 class="font-bold text-xl">🎫 All Tickets</h1>
+                        <table class="min-w-full my-3 text-left">
+                            <thead>
+                                <tr>
+                                    <th class="bg-gray-100 text-black px-4 py-2">Ticket Name</th>
+                                    <th class="bg-gray-100 text-black px-4 py-2">Price</th>
+                                    <th class="bg-gray-100 text-black px-4 py-2">Choose</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for tic in ticket %}
+                                <tr>
+                                    <td class="px-4 py-2">{{ tic.name }}</td>
+                                    <td class="px-4 py-2">
+                                        {% if tic.price == 0.00 %}
+                                            <p class="text-green-500 font-semibold">Free</p>
+                                        {% else %}
+                                            {{ tic.price }}
+                                        {% endif %}
+                                    </td>
+                                    <td class="px-4 py-2 text-center">
+                                        {% if tic.amount == 0 and tic.is_unlimited == False %}
+                                        <p class="text-red-500 font-semibold">Sold Out</p>
+                                        {% else %}
+                                        <input type="radio" value="{{ tic.id }}" name="ticket_type">
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        
+                        {% if user.is_authenticated %}
+                        <button
+                            type="submit"
+                            class="w-full mt-10 px-3 py-2 bg-white text-black hover:bg-violet-800 hover:text-white font-bold rounded-lg">
+                            Register Now!
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <!-- <div class="flex justify-between">
+        <div class="flex gap-10">
+            <img src="{{ event.image.url }}" alt="{{ event.title }}" class="w-[50%]">
+            <div class="flex flex-col">
+                <h1 class="text-4xl font-bold">{{ event.title }}</h1>
+                <div class="my-3">
+                    {% for cat in event.categories.all %}
+                    <span class="border-2 border-violet-400 text-violet-400 px-3 py-1 rounded-lg">{{ cat.name }}</span>
+                    {% endfor %}
+                </div>
+                <div class="my-5">
+                    <h2><span class="font-bold">Hosted By:</span> {{ event.user.first_name }} {{ event.user.last_name }}</h2>
+                    <h2>🗓️ {{ event.date|date:"F j, Y" }} ( {{ event.start_time }} - {{ event.end_time }} )</h2>
+                    <h2>📍 {{ event.place }}</h2>
+                    <div>
+                        <h2>📝 Detail:</h2>
+                        <h2>{{ event.detail }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="flex flex-col">
+            <img src="{% static 'images/qr.jpg' %}" alt="{{ event.title }}" class="w-[50%]">
+            <h1>จองวันไหน</h1>
+        </div>
+    </div> -->
+</div>
+{% endblock %}

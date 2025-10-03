@@ -1,0 +1,126 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}User Profile{% endblock %}
+
+{% block head %}
+<style>
+    .errorlist {
+        color: red;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="text-white mt-15 mx-7 my-5">
+    <h1 class="text-4xl font-bold text-center">My Account</h1>
+    <div class="flex gap-20 mt-5 justify-center text-xl font-semibold">
+        <a href="{% url 'user-profile' %}?page="
+            class="{% if page == '' %} text-violet-600 {% else %} text-white {% endif %}">
+            My Profile
+        </a>
+        <a href="{% url 'user-event' %}?page=event"
+            class="{% if page == 'event' %} text-violet-600 {% else %} text-white {% endif %}">
+            My Events
+        </a>
+    </div>
+    <div class="mt-10">
+        {% if page == "" %}
+        <div>
+            <p class="font-semibold text-center text-lg">Welcome to a world of TicketSphere✨</p>
+            <form method="post" action="{% url 'user-profile' %}">
+                <div class="grid grid-cols-2 gap-x-10 gap-y-5 mt-5">
+                    {% csrf_token %}
+                    <div class="flex flex-col">
+                        <label for="{{ userform.username.id_for_label }}"
+                            class="mb-1 font-semibold">Username</label>
+                        {{ userform.username }}
+                        {{ userform.username.errors }}
+                    </div>
+                    <div class="flex flex-col">
+                        <label for="{{ userform.first_name.id_for_label }}" class="mb-1 font-semibold">First
+                            Name</label>
+                        {{ userform.first_name }}
+                        {{ userform.first_name.errors }}
+                    </div>
+                    <div class="flex flex-col">
+                        <label for="{{ userform.last_name.id_for_label }}" class="mb-1 font-semibold">Last
+                            Name</label>
+                        {{ userform.last_name }}
+                        {{ userform.last_name.errors }}
+                    </div>
+                    <div class="flex flex-col">
+                        <label for="{{ userform.email.id_for_label }}" class="mb-1 font-semibold">Email</label>
+                        {{ userform.email }}
+                        {{ userform.email.errors }}
+                    </div>
+                </div>
+                <p class="my-5">You want to change password? <a href="{% url 'user-changepass' %}?page=password"
+                        class="text-yellow-400 font-semibold hover:text-violet-600 transition-colors duration-200">Change
+                        Password</a></p>
+                <button type="submit"
+                    class="my-1 font-bold p-2 bg-violet-600 text-white w-full hover:bg-violet-800 cursor-pointer transition-colors duration-200 rounded">Update
+                    Profile</button>
+            </form>
+        </div>
+        {% elif page == "password" %}
+        <div>
+            <p class="font-semibold text-center text-lg">Welcome to a world of TicketSphere✨</p>
+            <form method="post" action="{% url 'user-changepass' %}">
+                <div class="grid grid-cols-2 gap-x-10 gap-y-5 my-5">
+                    {% csrf_token %}
+                    <div class="flex flex-col">
+                        <label for="{{ passform.old_password.id_for_label }}" class="mb-1 font-semibold">Old
+                            Password</label>
+                        {{ passform.old_password }}
+                        {{ passform.old_password.errors }}
+                    </div>
+                    <div class="flex flex-col">
+                        <label for="{{ passform.new_password1.id_for_label }}" class="mb-1 font-semibold">New
+                            Password</label>
+                        {{ passform.new_password1 }}
+                        {{ passform.new_password1.errors }}
+                    </div>
+                    <div class="flex flex-col">
+                        <label for="{{ passform.new_password2.id_for_label }}" class="mb-1 font-semibold">Confirm New
+                            Password</label>
+                        {{ passform.new_password2 }}
+                        {{ passform.new_password2.errors }}
+                    </div>
+                </div>
+                <a href="{% url 'user-profile' %}?page="
+                    class="text-yellow-400 font-semibold hover:text-violet-600 transition-colors duration-200">< Back to My Profile</a>
+                <button type="submit"
+                    class="my-4 font-bold p-2 bg-violet-600 text-white w-full hover:bg-violet-800 cursor-pointer transition-colors duration-200 rounded">Change
+                    Password</button>
+            </form>
+        </div>
+        {% else %}
+        <div class="">
+            <button class="">Filter</button>
+            <div class="grid grid-cols-3 gap-y-10 gap-x-7">
+                {% for reg in result %}
+                    <a href="{% url 'user-event-detail' reg.event.id %}" class="flex flex-col gap-3 bg-white h-[250px] cursor-pointer">
+                        <img src="{{ reg.event.image.url }}" alt="event-image" class="w-full h-full object-cover">
+                        <div class="text-gray-400 font-semibold">
+                            <div>
+                                {{ reg.event.date|date:"F j, Y" }}
+                            </div>
+                            <h1 class="font-bold text-white text-2xl hover:text-white/75">{{ reg.event.title }}</h1>
+                            <div class="flex gap-1 items-center">
+                                <img src="{% static 'images/pin.png' %}" alt="location" class="w-[15px] h-[15px]">
+                                <h3>{{ reg.event.place }}</h3>
+                            </div>
+                            <div 
+                                class="inline-block border border-1 px-2 py-1 mt-2 rounded-lg {% if reg.status == 'registered' %}text-green-500 border-green-500 {% endif %}">
+                                {{ reg.status }}
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

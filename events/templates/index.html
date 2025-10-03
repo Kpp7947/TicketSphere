@@ -1,0 +1,65 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block title %}TicketSphere{% endblock %}
+{% block content %}
+<div>
+    <!-- <div class="w-full h-[45vh] relative overflow-hidden">
+        <img src="{% static 'images/bg.jpg' %}" alt="Logo" class="w-full h-full object-cover">
+    </div> -->
+    <!-- <div
+        class="bg-white/75 gap-4 py-7 max-w-4xl mx-auto relative -mt-20 shadow-lg flex flex-col items-center justify-center">
+        <h1 class="text-3xl font-bold">Find Your Event</h1>
+        <form method="get" action="" class="flex gap-4 items-center">
+            <label class="font-bold text-lg">Date</label>
+            <input type="date" class="border rounded-lg px-7 py-2 w-full">
+            <label class="font-bold text-lg">to</label>
+            <input type="date" class="border rounded-lg px-7 py-2 w-full">
+            <button type="submit" class="bg-violet-600 text-white font-semibold hover:bg-violet-800 px-4 py-2 rounded-lg">Search</button>
+        </form>
+    </div> -->
+    <div class="mt-10">
+        {% if user.is_authenticated %}
+            <p>Welcome K' {{ user.username }}</p>
+        {% endif %}
+        <div class="flex justify-between">
+            <h1 class="text-white text-4xl font-bold">Upcoming Events</h1>
+        </div>
+        <div class="grid grid-cols-4 gap-x-7 gap-y-10 mt-10">
+            {% for event in event_list %}
+            <!-- {{ event.image.url }} -->
+            <a href="{% url 'user-event-detail' id=event.id %}" class="flex flex-col gap-3 cursor-pointer">
+                <img src="{{ event.image.url }}" alt="event-image" class="w-full h-64 object-cover">
+                <div class="text-gray-400 font-semibold">
+                    <div>
+                        {{ event.date|date:"F j, Y" }}
+                    </div>
+                    <h1 class="font-bold text-white text-2xl hover:text-white/75">{{ event.title }}</h1>
+                    <div class="flex gap-1 items-center">
+                        <img src="{% static 'images/pin.png' %}" alt="location" class="w-[15px] h-[15px]">
+                        <h3>{{ event.place }}</h3>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="text-white text-center flex justify-around mt-40 mb-10">
+        <div class="flex flex-col items-center">
+            <img src="{% static 'images/check.png' %}" alt="" class="w-[100px]">
+            <h1 class="font-bold text-violet-500">CHOOSE EVENTS AND TICKET</h1>
+            <h2>with only a few clicks.</h2>
+        </div>
+        <div class="flex flex-col items-center">
+            <img src="{% static 'images/shopping-cart.png' %}" alt="" class="w-[100px]">
+            <h1 class="font-bold text-violet-500">BUY DIRECTLY FROM ORGANIZERS</h1>
+            <h2>easy transfer.</h2>
+        </div>
+        <div class="flex flex-col items-center">
+            <img src="{% static 'images/ticket.png' %}" alt="" class="w-[100px]">
+            <h1 class="font-bold text-violet-500">RECEIVE TICKET</h1>
+            <h2>get your tickets instantly via the website.</h2>
+        </div>
+    </div>
+</div>
+{% endblock %}
