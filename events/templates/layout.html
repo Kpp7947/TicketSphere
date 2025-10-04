@@ -8,10 +8,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     {% block head %}{% endblock %}
 </head>
-<body class="bg-slate-950 text-white mb-10">
+<body class="bg-black text-white mb-10">
     {% block nav %}{% include 'nav.html' %}{% endblock %}
     <div class="w-full h-[25vh] relative overflow-hidden">
-        <img src="{% static 'images/bg.jpg' %}" alt="Logo" class="w-full h-full object-cover">
+        <img src="{% static 'images/bg.jpg' %}" alt="Logo" class="w-full h-full object-cover bg-black/50">
     </div>
     <div class="absolute inset-0 bg-black/50"></div>
     <main class="mx-48 relative -mt-20">

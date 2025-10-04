@@ -2,11 +2,12 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import logout, login, update_session_auth_hash
-from .forms import CustomUserCreationForm, CustomPasswordChangeForm
+from .forms import CustomUserCreationForm, CustomPasswordChangeForm, CustomUserChangeForm
 from django.contrib.auth.models import Group
 from register.models import Register
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from django.contrib import messages
 # Create your views here.
 
 class LoginView(View):
@@ -17,11 +18,14 @@ class LoginView(View):
     def post(self, request):
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
-            user = form.get_user()
+            user = form.get_user() #ดึง user object ที่ผ่านการตรวจสอบแล้ว จาก AuthenticationForm
             login(request, user)
-
-            if request.user.groups.exclude(name__in=("Viewer", "User")):
+            # print(user.groups.all())
+            if user.groups.filter(name__in=["Organizer"]).exists(): #"Organizer" → string("Organizer") → string("Organizer",) → tuple ✅["Organizer"] → list ✅
+                # print("yess")
                 return redirect("organizer-home")
+            elif user.groups.filter(name__in=["Admin"]).exists() or user.is_staff:
+                return redirect("/admin/")
             else:
                 return redirect("user-home")
         return render(request, "login.html", {"form": form})
@@ -29,18 +33,20 @@ class LoginView(View):
 class SignupView(View):
     def get(self, request):
         form = CustomUserCreationForm()
-        # print(form)
         return render(request, "signup.html", {"form": form})
     
     def post(self, request):
         form = CustomUserCreationForm(request.POST)
-        print(form.errors)
+        organizer = request.POST.get("organizer")
+        organizer_group = Group.objects.get(name="Organizer")
+        user_group = Group.objects.get(name="User")
         if form.is_valid():
-            print("yes")
-            form.save()
-            print("yes")
+            user = form.save()
+            if organizer is None:
+                user.groups.add(user_group)
+            else:
+                user.groups.add(organizer_group)
             return redirect("login")
-        print("no")
         return render(request, "signup.html", {"form": form})
     
 class LogoutView(View):
@@ -52,24 +58,43 @@ class LogoutView(View):
 class UpdateUserProfile(View):
     def get(self, request):
         page = request.GET.get("page", "")
-        userform = CustomUserCreationForm(instance=request.user)        
+        userform = CustomUserChangeForm(instance=request.user)        
         return render(request, "myaccount.html", {
             "userform": userform,
             "page": page
         })
     
     def post(self, request):
-        userform = CustomUserCreationForm(data=request.POST)
-        print(userform)
-    
+        page = request.GET.get("page", "")
+        userform = CustomUserChangeForm(request.POST, instance=request.user)
+        if userform.is_valid():
+            userform.save()
+            return redirect('user-profile')
+        return render(request, "myaccount.html", {
+            "userform": userform,
+            "page": page
+        })
+
+@method_decorator(login_required, name='dispatch')
 class ChangePassword(View):
     def get(self, request):
         page = request.GET.get("page", "")
-        passform = CustomPasswordChangeForm(user=request.user)
+        passform = CustomPasswordChangeForm(request.user)
         return render(request, "myaccount.html", {
             "passform": passform,
             "page": page
         })
     
     def post(self, request):
-        passform = CustomPasswordChangeForm(user=request.POST)
+        page = request.GET.get("page", "")
+        passform = CustomPasswordChangeForm(request.user, request.POST)
+        if passform.is_valid():
+            user = passform.save()
+            update_session_auth_hash(request, user)
+            messages.success(request, "Password changed successfully!")
+            return redirect('user-profile')
+        # print(passform.errors)
+        return render(request, "myaccount.html", {
+            "passform": passform,
+            "page": page
+        })

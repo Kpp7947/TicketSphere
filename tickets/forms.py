@@ -10,10 +10,10 @@ class CreateTicketTypeForm(ModelForm):
         model = TicketType
         fields = ["name", "price", "quantity", "is_unlimited"]
         widgets = {
-            "name": TextInput(attrs={"class": "border rounded-lg px-3 py-2 w-full"}),
-            "price": NumberInput(attrs={"class": "border rounded-lg px-3 py-2 w-full"}),
-            "quantity": NumberInput(attrs={"class": "border rounded-lg px-3 py-2 w-full"}),
-            "is_unlimited": CheckboxInput(attrs={"class": "border rounded-lg px-3 py-2 w-full"})
+            "name": TextInput(attrs={"class": "text-black border rounded-lg px-3 py-2 w-full"}),
+            "price": NumberInput(attrs={"class": "text-black border rounded-lg px-3 py-2 w-full"}),
+            "quantity": NumberInput(attrs={"class": "text-black border rounded-lg px-3 py-2 w-full"}),
+            "is_unlimited": CheckboxInput(attrs={"class": "text-black border rounded-lg px-3 py-2 w-full"})
         }
 
     def clean(self):

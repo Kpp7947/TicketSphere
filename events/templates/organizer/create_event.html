@@ -10,10 +10,10 @@
     </style>
 {% endblock %}
 {% block content %}
-<div class="flex items-center justify-center mb-10 -mt-40">
+<div class="flex items-center justify-center mb-10">
     <form action="" method="POST" enctype="multipart/form-data">
         <div class="flex items-center justify-center">
-            <h1 class="text-white text-3xl mb-5 font-bold">📅 Create Event</h1>
+            <h1 class="text-white text-4xl mb-5 font-bold">📅 Create Event</h1>
         </div>
         <div class="flex justify-center items-start bg-white/85 p-8 rounded-xl shadow-md gap-10">
             {% csrf_token %}
@@ -77,13 +77,30 @@
                 </div>
             </div>
         </div>
-        <div class="flex gap-3 mt-5 justify-end">
-            <a href="{% url 'organizer-home' %}" class="bg-white/85 text-black cursor-pointer py-3 px-4 rounded-lg font-semibold hover:bg-white/70 hover:text-white transition-colors duration-200"
+        
+        <div class="flex flex-col items-center justify-center mt-10">
+            <div>
+                <h1 class="text-white text-4xl mb-5 font-bold">🎫 Create Ticket</h1>
+            </div>
+            <div id="form-container">
+                {{ ticketForm.management_form }}
+                {% for form in ticketForm %}
+                {{ form.non_field_errors }}
+                <div class="flex">
+                    {% include "partials/ticket_form.html" with form=form %}
+                </div>
+                {% endfor %}
+            </div>
+            <div class="flex gap-3 mt-2">
+                <a href="{% url 'organizer-home' %}" class="bg-white/85 text-black cursor-pointer py-3 px-4 rounded-lg font-semibold hover:bg-white/70 hover:text-white transition-colors duration-200"
                     type="submit">Cancel</a>
-            <button class="bg-violet-600 py-3 px-4 rounded-lg font-semibold hover:bg-violet-800 text-white transition-colors duration-200"
+                <button class="bg-green-600 py-2 px-4 rounded-lg font-semibold hover:bg-green-800 transition-colors duration-200"
+                    hx-get="{% url 'add_ticket_form' %}" hx-target="#form-container" hx-swap="beforeend"
+                    hx-vals='js:{"index": document.querySelector("#id_form-TOTAL_FORMS").value}'>Add Ticket</button>
+                <button class="bg-violet-600 py-2 px-4 rounded-lg font-semibold hover:bg-violet-800 text-white transition-colors duration-200"
                     type="submit">Create Event</button>
+            </div>
         </div>
-
     </form>
 </div>
 {% endblock %}
@@ -98,28 +115,8 @@
         if (file) {
             preview.src = URL.createObjectURL(file)
             preview.classList.add('w-full', 'h-full', 'object-cover', 'rounded-lg', 'p-2');
-            // preview.classList.remove('hidden')
         }
     })
 </script>
 <script src="https://unpkg.com/htmx.org@1.9.6"></script>
-<!-- <script>
-    const fileInput = document.getElementById('{{ form.image.id_for_label }}')
-    const previewImage = document.getElementById('preview-image')
-    const previewContainer = document.getElementById('preview-container')
-
-    fileInput.addEventListener('change', (e) => {
-        const [file] = fileInput.files
-        if (file) {
-            const img = previewImage || document.createElement('img')
-            img.id = 'preview-image'
-            img.className = 'h-40 object-contain mb-2'
-            img.src = URL.createObjectURL(file)
-
-            // เคลียร์ preview-container แล้วใส่รูปใหม่
-            previewContainer.innerHTML = ''
-            previewContainer.appendChild(img)
-        }
-    })
-</script> -->
 {% endblock %}

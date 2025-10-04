@@ -19,8 +19,8 @@ class Ticket(models.Model):
         USED = "used", "Used"
         EXPIRED = "expired", "Expired"
     register = models.ForeignKey("register.Register", on_delete=models.CASCADE)
-    ticket_code = models.CharField(max_length=100)
-    qr_code = models.CharField(max_length=100)
+    ticket_code = models.CharField(max_length=100, unique=True)
+    qr_code = models.ImageField(upload_to="image/qr_codes/", blank=True, null=True)
     status = models.CharField(
         choices=StatusTicket.choices,
         default=StatusTicket.VALID

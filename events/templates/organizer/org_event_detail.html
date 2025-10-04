@@ -1,0 +1,74 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}Create Event{% endblock %}
+
+{% block content %}
+    <div class="text-white mx-20">
+        <div class="flex gap-10 justify-center">
+            <img src="{{ event.image.url }}" alt="{{ event.title }}" class="w-auto max-h-80">
+            <div class="flex flex-col">
+                <h1 class="text-4xl font-bold">{{ event.title }}</h1>
+                <div class="my-3">
+                    {% for cat in event.categories.all %}
+                        <span class="border-2 border-violet-400 text-violet-400 px-3 py-1 rounded-lg">{{ cat.name }}</span>
+                    {% endfor %}
+                </div>
+                <div class="my-5">
+                    <h2>🗓️ {{ event.date|date:"F j, Y" }} ( {{ event.start_time }} - {{ event.end_time }} )</h2>
+                    <h2>📍 {{ event.place }}</h2>
+                    <div>
+                        <h2>📝 Detail:</h2>
+                        <h2>{{ event.detail }}</h2>
+                    </div>
+                </div>
+                <div class="my-3">
+                    <h1 class="font-bold text-xl">🎫 All Tickets</h1>
+                    <h2>Total Registrations: {{ total }}</h2>
+                    <table class="min-w-full my-3 text-left">
+                        <thead>
+                            <tr>
+                                <th class="bg-gray-100 text-black px-4 py-2">Ticket Name</th>
+                                <th class="bg-gray-100 text-black px-4 py-2">Price</th>
+                                <th class="bg-gray-100 text-black px-4 py-2">Quantity</th>
+                                <th class="bg-gray-100 text-black px-4 py-2">Amount</th>
+                                <th class="bg-gray-100 text-black px-4 py-2">Registered</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tic in ticket %}
+                            <tr>
+                                <td class="px-4 py-2">{{ tic.name }}</td>
+                                {% if tic.price == 0.00 %}
+                                    <td class="text-green-500 font-semibold px-4 py-2">Free</td>
+                                {% else %}
+                                    <td class="px-4 py-2">{{ tic.price }}</td>
+                                {% endif %}
+
+                                {% if tic.quantity == None or tic.is_unlimited == True %}
+                                    <td class="px-4 py-2 font-semibold text-green-500">Unlimited</td>
+                                    <td class="px-4 py-2">-</td>
+                                {% else %}
+                                    <td class="px-4 py-2">{{ tic.quantity }}</td>
+                                    <td class="px-4 py-2">{{ tic.amount }}</td>
+                                {% endif %}
+                                <td class="px-4 py-2">{{ tic.registered }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="flex justify-end gap-3 mt-10">
+            <a href="{% url 'organizer-home' %}" class="px-3 py-2 bg-gray-500 hover:bg-gray-600 font-semibold rounded-lg">Back to home</a>
+            {% if event.status == 'draft' %}
+                <a href="{% url 'organizer-update-event' id=event.id %}" class="px-3 py-2 bg-violet-600 hover:bg-violet-800 font-semibold rounded-lg">Update Event</a>
+                <button class="px-3 py-2 bg-red-600 hover:bg-red-800 font-semibold rounded-lg">Delete Event</button>
+            {% else %}
+                <button class="px-3 py-2 bg-violet-600 hover:bg-violet-800 font-semibold rounded-lg">Ongoing</button>
+                <button class="px-3 py-2 bg-red-600 hover:bg-red-800 font-semibold rounded-lg">Cancel Event</button>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

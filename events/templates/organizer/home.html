@@ -146,30 +146,20 @@
                         </p>
                     {% else %}
                         {% for tic in event.ticket_name %}
-                        <span class="border border border-yellow-400 text-yellow-500 mr-2 p-1 rounded-md">
+                        <!-- <span class="border border border-yellow-400 text-yellow-500 mr-2 p-1 rounded-md">
                             {{ tic }}
-                        </span>
+                        </span> -->
+                        <li>{{tic}}</li>
                         {% endfor %}
                     {% endif %}
                 </td>
                 <td class="px-4 py-5">
-                    {% if event.status == "draft" %}
-                    <div class="flex gap-3 items-center">
-                        <a href="{% url 'organizer-edit-event' id=event.id %}"
-                            class="bg-yellow-600 py-1 px-4 rounded-lg font-semibold hover:bg-yellow-700 text-white">
-                            Edit
-                        </a>
-                        <a href="">
-                            <img src="{% static 'images/delete.png' %}" alt="delete event" class="w-[25px]">
-                        </a>
-                    </div>
-                    {% else %}
-                    <a href=""
+                    <a href="{% url 'organizer-event-detail' id=event.id %}"
                         class="bg-violet-600 py-1 px-4 rounded-lg font-semibold hover:bg-violet-800 text-white">
                         Detail
                     </a>
-                    {% endif %}
                 </td>
+
             </tr>
             {% empty %}
             <tr>

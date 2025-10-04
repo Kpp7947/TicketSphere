@@ -18,14 +18,14 @@
             <button type="submit" class="bg-violet-600 text-white font-semibold hover:bg-violet-800 px-4 py-2 rounded-lg">Search</button>
         </form>
     </div> -->
-    <div class="mt-10">
+    <div class="">
         {% if user.is_authenticated %}
             <p>Welcome K' {{ user.username }}</p>
         {% endif %}
         <div class="flex justify-between">
             <h1 class="text-white text-4xl font-bold">Upcoming Events</h1>
         </div>
-        <div class="grid grid-cols-4 gap-x-7 gap-y-10 mt-10">
+        <div class="grid grid-cols-4 gap-x-7 gap-y-10 mt-20">
             {% for event in event_list %}
             <!-- {{ event.image.url }} -->
             <a href="{% url 'user-event-detail' id=event.id %}" class="flex flex-col gap-3 cursor-pointer">

@@ -1,0 +1,80 @@
+{% load static %}
+<style>
+    input[name$="-DELETE"] {
+        display: none;
+    }
+</style>
+<div class="ticket-form bg-white/75 text-black py-3 rounded-xl mb-3">
+    <!-- <div class="flex gap-5"> -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Ticket Name</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Unlimited</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="ticket-row">
+                  {{ form.id }}
+                    <td class="px-3">
+                        {{ form.name }}
+                        {{ form.name.errors }}
+                    </td>
+                    <td class="px-3">{{ form.price }}</td>
+                    <td class="px-3">{{ form.quantity }}</td>
+                    <td class="px-3">
+                        {{ form.is_unlimited }}
+                    </td>
+                    <td class="px-3">
+                        {{ form.DELETE }}
+                        <button type="button" class="delete-btn transition-colors duration-200 text-white font-semibold cursor-pointer bg-red-600 px-3 py-2 rounded-lg hover:bg-red-800">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    <!-- </div> -->
+</div>
+
+<script>
+const container = document.getElementById('form-container');
+
+/* ลบแถว: ใช้ event delegation */
+container.addEventListener('click', (e) => {
+  const btn = e.target.closest('.delete-btn');
+  if (!btn) return;
+
+  const row = btn.closest('.ticket-form');
+  const deleteInput = row.querySelector("input[name$='-DELETE']");
+  if (deleteInput) deleteInput.checked = true;
+  row.style.display = "none";
+});
+
+/* quantity ↔ is_unlimited: ใช้ event delegation เช่นกัน */
+container.addEventListener('change', (e) => {
+  const checkbox = e.target.matches("input[name$='-is_unlimited']") ? e.target : null;
+  if (!checkbox) return;
+
+  const formDiv = checkbox.closest('.ticket-form');
+  const quantity = formDiv.querySelector("input[name$='-quantity']");
+  if (!quantity) return;
+
+  if (checkbox.checked) {
+    quantity.value = 0;
+    quantity.disabled = true;
+  } else {
+    quantity.disabled = false;
+  }
+});
+
+/* init สถานะของแถวที่มีอยู่ตอนโหลดครั้งแรก */
+document.querySelectorAll('.ticket-form').forEach(formDiv => {
+  const checkbox = formDiv.querySelector("input[name$='-is_unlimited']");
+  const quantity = formDiv.querySelector("input[name$='-quantity']");
+  if (!checkbox || !quantity) return;
+  quantity.disabled = checkbox.checked;
+});
+</script>
