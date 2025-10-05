@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}Event Detail{% endblock %}
+
+{% block content %}
+<div class="flex flex-col justify-center items-center text-white -mt-20">
+    <div class="inline-block w-[75%]">
+        <div class="flex gap-10">
+            {% for tic in ticket %}
+            <img src="{{ tic.qr_code.url }}" alt="{{ qrcode }}" class="w-[40%] rounded-3xl">
+            <div class="flex flex-col">
+                <h1 class="text-4xl font-bold">Your ticket</h1>
+                <div class="my-3">
+                    <span class="border-2 border-violet-400 text-violet-400 px-3 py-1 rounded-lg">{{ tic.register.status }}</span>
+                </div>
+                <div class="my-5">
+                    <h2><span class="font-bold">Register at:</span> {{ tic.register.registered_at|date:"F j, Y" }}</h2>
+                    <h2><span class="font-bold">Ticket code:</span> {{ tic.ticket_code }}</h2>
+                    <h2><span class="font-bold">Ticket status:</span> {{ tic.status }}</h2>
+                    <h2><span class="font-bold">Expired at:</span> {{ tic.expired_at.date }}</h2>
+                    <h2><span class="font-bold">Used at:</span> <span>{% if tic.used_at is None %}-{% else %}{{ tic.used_at.date }}{% endif %}</span></h2>
+                    <div class="mt-10">
+                        <a href="{% url 'user-event-detail' tic.register.event.id %}" class="transition-colors duration-200 px-3 py-3 bg-gray-400 hover:bg-gray-500 font-semibold rounded-lg">Back to Event</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -19,7 +19,7 @@
             class="{% if page == '' %} text-violet-600 {% else %} text-white {% endif %}">
             My Profile
         </a>
-        <a href="{% url 'user-event' %}?page=event"
+        <a href="{% url 'user-profile-event-registered' %}?page=event"
             class="{% if page == 'event' %} text-violet-600 {% else %} text-white {% endif %}">
             My Events
         </a>
@@ -116,7 +116,7 @@
                                 <h3>{{ reg.event.place }}</h3>
                             </div>
                             <div 
-                                class="inline-block border border-1 px-2 py-1 mt-2 rounded-lg {% if reg.status == 'registered' %}text-green-500 border-green-500 {% endif %}">
+                                class="inline-block mb-10 border border-1 px-2 py-1 mt-2 rounded-lg {% if reg.status == 'registered' %}text-green-500 border-green-500 {% endif %}">
                                 {{ reg.status }}
                             </div>
                         </div>

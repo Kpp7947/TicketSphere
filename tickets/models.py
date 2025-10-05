@@ -13,6 +13,8 @@ class TicketType(models.Model):
     def __str__(self):
         return self.name
 
+def qr_code_path(instance, filename):
+    return f"image/qr_codes/{instance.register.id}_{filename}"
 class Ticket(models.Model):
     class StatusTicket(models.TextChoices):
         VALID = "valid", "Valid"
@@ -20,7 +22,7 @@ class Ticket(models.Model):
         EXPIRED = "expired", "Expired"
     register = models.ForeignKey("register.Register", on_delete=models.CASCADE)
     ticket_code = models.CharField(max_length=100, unique=True)
-    qr_code = models.ImageField(upload_to="image/qr_codes/", blank=True, null=True)
+    qr_code = models.ImageField(upload_to=qr_code_path, blank=True, null=True)
     status = models.CharField(
         choices=StatusTicket.choices,
         default=StatusTicket.VALID

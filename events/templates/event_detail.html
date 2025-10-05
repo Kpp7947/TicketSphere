@@ -54,24 +54,70 @@
                                             <p class="text-red-500 font-semibold">Sold Out</p>
                                             {% else %}
                                                 <input type="radio" value="{{ tic.id }}" name="ticket_type">
-                                            {% endif %}
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                            
-                            {% if user.is_authenticated %}
-                            <button
-                                type="submit"
-                                class="w-full mt-10 px-3 py-2 bg-white text-black hover:bg-violet-800 hover:text-white font-bold rounded-lg">
-                                Register Now!
-                            </button>
-                            {% endif %}
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                                {% if messages %}
+                                    <ul>
+                                        {% for message in messages %}
+                                            <li class="text-red-500 text-end">{{ message }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+                                <div class="flex w-full mt-10 gap-3">
+                                    <a href="{% url 'user-home' %}"
+                                        class="text-center w-full px-3 py-2 bg-gray-400 hover:bg-gray-500 hover:text-white font-bold rounded-lg">
+                                        Back to Home
+                                    </a>
+                                    {% if user.is_authenticated %}
+                                    <button
+                                        type="submit"
+                                        class="w-full px-3 py-2 bg-violet-600 hover:bg-violet-800 hover:text-white font-bold rounded-lg">
+                                        Register Now!
+                                    </button>
+                                    {% endif %}
+                                </div>
                         </form>
                     </div>
+                    {% else %}
+                        <h1 class="font-bold text-xl">🎫 My Ticket</h1>
+                        <table class="min-w-full my-3 text-left">
+                            <thead>
+                                <tr>
+                                    <th class="bg-gray-100 text-black px-4 py-2">Ticket Name</th>
+                                    <th class="bg-gray-100 text-black px-4 py-2">Status</th>
+                                    <th class="bg-gray-100 text-black px-4 py-2"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for reg in register %}
+                                <tr>
+                                    <td class="px-4 py-2">{{ reg.ticket_type.name }}</td>
+                                    <td class="px-4 py-2">
+                                        <div 
+                                            class="inline-block border-2 px-2 py-1 rounded-lg {% if reg.status == 'registered' %}text-green-500 border-green-500 {% endif %}">
+                                            {{ reg.status }}
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-4">
+                                        <a href="{% url 'user-ticket-detail' id=reg.id %}"
+                                            class="px-2 py-1 cursor-pointer font-semibold hover:bg-green-800 bg-green-600 rounded-md">
+                                            QR code
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <a href="{% url 'user-home' %}"
+                            class="text-center w-full px-3 py-2 bg-gray-400 hover:bg-gray-500 hover:text-white font-bold rounded-lg">
+                            Back to Home
+                        </a>
+                    {% endif %}
                 </div>
-                {% endif %}
             </div>
         </div>
     </div>

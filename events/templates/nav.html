@@ -13,24 +13,23 @@
 <body>
     <header
         class="sticky text-white flex justify-between p-10 items-center z-[100] h-14 inset-x-0 top-0 w-full bg-slate-950/65 backdrop-blur-md transition-all ">
-        <div class="flex items-center gap-10">
-            {% if user|in_group:'Admin' or user|in_group:'Organizer' %}
-            <a href="{% url 'organizer-home' %}">
-                <img src="{% static 'images/logo.png' %}" alt="logo" class="w-[180px]">
-            </a>
-            {% else %}
+        <div class="flex items-center gap-7">
             <a href="{% url 'user-home' %}">
                 <img src="{% static 'images/logo.png' %}" alt="logo" class="w-[180px]">
             </a>
             <form action="{% url 'search-event' %}" method="get">
                 <input type="text" name="q" class="block w-[300px] rounded-md px-4 py-1 text-black" placeholder="Search title...">
             </form>
-            {% endif %}
         </div>
         <!-- <input type="text" class="text-black px-2"> -->
         <div class="flex items-center gap-7 items-center">
             <!-- <a href="">Organizer</a> -->
             {% if user.is_authenticated %}
+                {% if user|in_group:'Admin' or user|in_group:'Organizer' %}
+                    <a href="{% url 'organizer-home' %}">
+                        Organizer
+                    </a>
+                {% endif %}
                 <a href="{% url 'user-profile' %}" class="flex gap-1 hover:text-violet-600">
                     <img src="{% static 'images/user.png' %}" alt="user" class="w-[26px]">
                     <p>{{ user.username }}</p>

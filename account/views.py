@@ -21,10 +21,10 @@ class LoginView(View):
             user = form.get_user() #ดึง user object ที่ผ่านการตรวจสอบแล้ว จาก AuthenticationForm
             login(request, user)
             # print(user.groups.all())
-            if user.groups.filter(name__in=["Organizer"]).exists(): #"Organizer" → string("Organizer") → string("Organizer",) → tuple ✅["Organizer"] → list ✅
+            # if user.groups.filter(name__in=["Organizer"]).exists(): #"Organizer" → string("Organizer") → string("Organizer",) → tuple ✅["Organizer"] → list ✅
                 # print("yess")
-                return redirect("organizer-home")
-            elif user.groups.filter(name__in=["Admin"]).exists() or user.is_staff:
+                # return redirect("organizer-home")
+            if user.groups.filter(name__in=["Admin"]).exists() or user.is_staff:
                 return redirect("/admin/")
             else:
                 return redirect("user-home")
@@ -42,9 +42,8 @@ class SignupView(View):
         user_group = Group.objects.get(name="User")
         if form.is_valid():
             user = form.save()
-            if organizer is None:
-                user.groups.add(user_group)
-            else:
+            user.groups.add(user_group)
+            if organizer is not None:
                 user.groups.add(organizer_group)
             return redirect("login")
         return render(request, "signup.html", {"form": form})

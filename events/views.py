@@ -25,7 +25,7 @@ from tickets.forms import TicketFormSet
 # Create your views here.
 
 class HomeView(View):
-    
+    # ทุกคน
     def get(self, request):
         event_list = Event.objects.filter(
             status="upcoming"
@@ -37,6 +37,7 @@ class HomeView(View):
         })
     
 class SearchView(View):
+    # ทุกคน
     def get(self, request):
         search = request.GET.get("q", "")
         event = Event.objects.filter(status="upcoming")
@@ -46,6 +47,7 @@ class SearchView(View):
                 Q(place__icontains=search) | 
                 Q(categories__name__icontains=search)
             )
+        event = event.distinct()
         # print(event)
         return render(request, "search_event.html", {
             "search": search,
@@ -54,11 +56,12 @@ class SearchView(View):
         })
 
 class EventDetail(View):
+    # ทุกคน
     def get(self, request, id):
         event = Event.objects.get(id=id)
         user = request.user
         register = Register.objects.filter(user=user.id, event=event)
-        # print(register)
+        print(register)
 
         ticket = TicketType.objects.filter(event=event).annotate(
             amount=F('quantity') - Count('register')
@@ -73,13 +76,14 @@ class EventDetail(View):
 
 # Organizer
 class OrganizerHomeView(PermissionRequiredMixin, View):
+    # Organizer ที่ login + ดู event dashboard ได้เฉพาะของตัวเอง
     permission_required = ["events.view_event"]
     def get(self, request):
         search = request.GET.get("search", "")
         price_filter = request.GET.get("price", "")
         category_filter = request.GET.get("category", "")
         # print("user: ", request.user.groups.all())
-        user = request.user.groups.exclude(name__in=("Viewer", "User"))
+        # user = request.user.groups.exclude(name__in=("User"))
         # print(user)
         new_price_filter = None
         new_cat_filter = None
@@ -90,7 +94,9 @@ class OrganizerHomeView(PermissionRequiredMixin, View):
         if category_filter:
             new_cat_filter = category_filter.split(",")
         
-        event_list = Event.objects.prefetch_related("categories", "ticket_types").all().order_by("-created_at")
+        event_list = Event.objects.prefetch_related("categories", "ticket_types").filter(
+            user=request.user
+        ).order_by("-created_at")
 
         # print(new_price_filter)
         # print(price_filter)
@@ -114,13 +120,12 @@ class OrganizerHomeView(PermissionRequiredMixin, View):
                 event_list = event_list.filter(
                     ticket_types__price=(Decimal(price_filter))
                 )
-            elif price_filter == "10000":
+            elif price_filter == "10001":
                 event_list = event_list.filter(
                     ticket_types__price__gt=(Decimal(price_filter))
                 )
         event_list = event_list.distinct()
         category = Category.objects.all()
-
 
         for event in event_list:
             event.category_name = [cat.name for cat in event.categories.all()]
@@ -135,7 +140,9 @@ class OrganizerHomeView(PermissionRequiredMixin, View):
             "category_filter": category_filter
         })
     
-class CreateEvent(View):
+class CreateEvent(PermissionRequiredMixin, View):
+    # Organizer
+    permission_required = ["events.add_event", "tickets.add_tickettype"]
     def get(self, request):
         eventForm = CreateEventForm()
         # user = User.objects.get(id=1)
@@ -169,11 +176,13 @@ class CreateEvent(View):
         except Exception as e:
             print(e)
         return render(request, "organizer/create_event.html", {
-                "eventForm": event_form, 
-                "ticketForm": ticket_form
-            })
+            "eventForm": event_form, 
+            "ticketForm": ticket_form
+        })
     
-class OrganizerEventDetail(View):
+class OrganizerEventDetail(PermissionRequiredMixin, View):
+    # Organizer ที่ login + ดู event ได้เฉพาะของตัวเอง
+    permission_required = ["events.view_event"]
     def get(self, request, id):
         event_detail = Event.objects.get(pk=id)
         ticket = TicketType.objects.filter(event=event_detail).annotate(
@@ -193,7 +202,9 @@ class OrganizerEventDetail(View):
             "total": total['registered']
         })
 
-class OrganizerUpdateEvent(View):
+class OrganizerUpdateEvent(PermissionRequiredMixin, View):
+    # Organizer ที่ login + แก้ event ได้เฉพาะของตัวเอง
+    permission_required = ["events.change_event"]
     def get(self, request, id):
         event_detail = Event.objects.get(pk=id)
         ticket = TicketType.objects.filter(event=event_detail)

@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 # Create your models here.
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
+    color = models.CharField(max_length=10, default="#FFFFFF")
 
     def __str__(self):
         return self.name
